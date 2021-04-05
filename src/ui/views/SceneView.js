@@ -9,7 +9,8 @@ import {
   Scene,
   Color,
   Mesh,
-  MeshPhongMaterial
+  MeshPhongMaterial,
+  DirectionalLight
 } from 'three'
 import figuresDescription from '../../assets/descriptions/figures.json'
 import lightsDescription from '../../assets/descriptions/lights.json'
@@ -31,11 +32,19 @@ onMount(async () => {
   const controls = makeControls(camera, renderer.domElement)
   const scene = makeScene()
 
+  // make lights
+  const lights = makeLights()
   // load board
   const board = await loadBoard()
+  // load figures
+  const figures = await loadFigures()
 
+  // add lights on scene
+  scene.add(...lights)
   // add board on scene
   scene.add(board)
+  // add figures on board
+  scene.add(...figures)
   // add renderer on screen
   container.appendChild(renderer.domElement)
 
@@ -155,4 +164,55 @@ async function loadBoard () {
   mesh.rotation.set(-Math.PI / 2, 0, 0)
 
   return mesh
+}
+
+/**
+ * @returns {Promise<Array<THREE.Mesh>>}
+ */
+async function loadFigures () {
+  const loader = new STLLoader()
+
+  const promisedMeshes = figuresDescription.map(async figure => {
+    const material = new MeshPhongMaterial({ color: new Color(figure.color) })
+    const mesh = new Mesh(
+      await loader.loadAsync(`./assets/models/${figure.name}.stl`),
+      material
+    )
+
+    mesh.name = figure.name
+    mesh.scale.set(figure.scale, figure.scale, figure.scale)
+    mesh.position.set(figure.position.x, figure.position.y, figure.position.z)
+    mesh.rotation.set(-Math.PI / 2, 0, 0)
+
+    return mesh
+  })
+
+  return Promise.all(promisedMeshes)
+}
+
+/**
+ * @returns {Array <THREE.Light>}
+ */
+function makeLights () {
+  return lightsDescription.map(it => {
+    /**
+     * @type {THREE.Light}
+     */
+    let light
+
+    switch (it.type) {
+      case 'directional_light': {
+        light = new DirectionalLight(new Color(it.color), it.intensity)
+        break
+      }
+
+      default: {
+        throw new Error('Incorrect light config')
+      }
+    }
+
+    light.position.set(it.position.x, it.position.y, it.position.z)
+
+    return light
+  })
 }

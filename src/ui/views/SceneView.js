@@ -1,19 +1,22 @@
 import { onMount } from 'svelte'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 import {
   WebGLRenderer,
   sRGBEncoding,
   NoToneMapping,
   PerspectiveCamera,
   Scene,
-  Color
+  Color,
+  Mesh,
+  MeshPhongMaterial
 } from 'three'
-import figuresDescription from '../../assets/figures.json'
-import lightsDescription from '../../assets/lights.json'
-import sceneDescription from '../../assets/scene.json'
-import cameraDescription from '../../assets/camera.json'
-import boardDescription from '../../assets/board.json'
-import playersDescription from '../../assets/players.json'
+import figuresDescription from '../../assets/descriptions/figures.json'
+import lightsDescription from '../../assets/descriptions/lights.json'
+import sceneDescription from '../../assets/descriptions/scene.json'
+import cameraDescription from '../../assets/descriptions/camera.json'
+import boardDescription from '../../assets//descriptions/board.json'
+import playersDescription from '../../assets/descriptions/players.json'
 
 /**
  * @type {HTMLDivElement}
@@ -21,12 +24,20 @@ import playersDescription from '../../assets/players.json'
  */
 let container
 
-onMount(() => {
+onMount(async () => {
   const fps = 30
   const renderer = makeRenderer(container)
   const camera = makeCamera(container)
   const controls = makeControls(camera, renderer.domElement)
   const scene = makeScene()
+
+  // load board
+  const board = await loadBoard()
+
+  // add board on scene
+  scene.add(board)
+  // add renderer on screen
+  container.appendChild(renderer.domElement)
 
   // watch resize window
   window.addEventListener('resize', () => {
@@ -35,8 +46,6 @@ onMount(() => {
     camera.updateProjectionMatrix()
     renderer.setSize(container.clientWidth, container.clientHeight)
   })
-  // add renderer on screen
-  container.appendChild(renderer.domElement)
 
   const render = function () {
     // update controls
@@ -130,4 +139,20 @@ function makeControls (camera, canvas) {
 function calcFov (container) {
   const a = container.clientHeight / container.clientWidth
   return Math.pow(a, 2) + cameraDescription.fov.ceed * a + cameraDescription.fov.min
+}
+
+/**
+ * @returns {Promise<THREE.Mesh>}
+ */
+async function loadBoard () {
+  const loader = new STLLoader()
+
+  const material = new MeshPhongMaterial({ color: new Color(boardDescription.color) })
+  const mesh = new Mesh(await loader.loadAsync('assets/models/board.stl'), material)
+
+  mesh.scale.set(boardDescription.scale, boardDescription.scale, boardDescription.scale)
+  mesh.position.set(boardDescription.position.x, boardDescription.position.y, boardDescription.position.z)
+  mesh.rotation.set(-Math.PI / 2, 0, 0)
+
+  return mesh
 }

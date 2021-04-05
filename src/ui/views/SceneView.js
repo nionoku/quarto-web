@@ -10,7 +10,8 @@ import {
   Color,
   Mesh,
   MeshPhongMaterial,
-  DirectionalLight
+  DirectionalLight,
+  CylinderGeometry
 } from 'three'
 import figuresDescription from '../../assets/descriptions/figures.json'
 import lightsDescription from '../../assets/descriptions/lights.json'
@@ -36,6 +37,8 @@ onMount(async () => {
   const lights = makeLights()
   // load board
   const board = await loadBoard()
+  // make board cells
+  const boardCells = makeBoardCells()
   // load figures
   const figures = await loadFigures()
 
@@ -43,6 +46,8 @@ onMount(async () => {
   scene.add(...lights)
   // add board on scene
   scene.add(board)
+  // add board cells on scene
+  scene.add(...boardCells)
   // add figures on board
   scene.add(...figures)
   // add renderer on screen
@@ -191,7 +196,7 @@ async function loadFigures () {
 }
 
 /**
- * @returns {Array <THREE.Light>}
+ * @returns {Array<THREE.Light>}
  */
 function makeLights () {
   return lightsDescription.map(it => {
@@ -214,5 +219,24 @@ function makeLights () {
     light.position.set(it.position.x, it.position.y, it.position.z)
 
     return light
+  })
+}
+
+/**
+ * @returns {Array<THREE.Mesh>}
+ */
+function makeBoardCells () {
+  return boardDescription.cells.map(cell => {
+    const geometry = new CylinderGeometry(1, 1, 0.2, 50, 1)
+    const material = new MeshPhongMaterial({ color: new Color(cell.color) })
+    const mesh = new Mesh(geometry, material)
+
+    mesh.position.set(
+      cell.position.x,
+      cell.position.y,
+      cell.position.z
+    )
+
+    return mesh
   })
 }

@@ -4,6 +4,7 @@ import svelte from 'rollup-plugin-svelte'
 import css from 'rollup-plugin-css-only'
 import preprocess from 'svelte-preprocess'
 import copy from 'rollup-plugin-copy'
+import json from '@rollup/plugin-json'
 import { terser } from 'rollup-plugin-terser'
 
 const production = !process.env.ROLLUP_WATCH
@@ -13,7 +14,7 @@ export default {
   output: {
     sourcemap: true,
     format: 'iife',
-    name: 'quarto-web',
+    name: 'app',
     file: 'dist/bundle.js'
   },
   plugins: [
@@ -46,6 +47,7 @@ export default {
         }
       ]
     }),
+    json(),
     // If we're building for production (npm run build
     // instead of npm run dev), minify
     production && terser()

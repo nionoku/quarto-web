@@ -4,11 +4,12 @@
    "scripts": {
       "build": "sh scripts/before_start.sh && rollup -c",
       "watch": "sh scripts/before_start.sh && rollup -c -w",
-      "sirv": "sirv dist --no-clear",
+      "sirv": "sirv dist -D",
       "serve": "npm run watch & npm run sirv"
    },
    "devDependencies": {
       "@rollup/plugin-commonjs": "^18.0.0",
+      "@rollup/plugin-json": "^4.1.0",
       "@rollup/plugin-node-resolve": "^11.2.1",
       "@typescript-eslint/eslint-plugin": "^4.20.0",
       "eslint": "^7.23.0",
@@ -21,6 +22,7 @@
       "sass": "^1.32.8",
       "sirv-cli": "^1.0.11",
       "svelte": "^3.37.0",
-      "svelte-preprocess": "^4.7.0"
+      "svelte-preprocess": "^4.7.0",
+      "three": "^0.127.0"
    }
 }

@@ -1,0 +1,24 @@
+[
+  {
+    "order": 0,
+    "marker": {
+      "position": {
+        "x": 6.5,
+        "y": 0,
+        "z": 0
+      },
+      "color": "blue"
+    }
+  },
+  {
+    "order": 1,
+    "marker": {
+      "position": {
+        "x": -6.5,
+        "y": 0,
+        "z": 0
+      },
+      "color": "yellow"
+    }
+  }
+]

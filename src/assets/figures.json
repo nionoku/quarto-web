@@ -1,0 +1,162 @@
+[
+  {
+    "name": "LCSF",
+    "color": "#FF6F00",
+    "scale": 0.05,
+    "position": {
+      "x": -1,
+      "y": 0,
+      "z": 6
+    }
+  },
+  {
+    "name": "LCSH",
+    "color": "#FF6F00",
+    "scale": 0.05,
+    "position": {
+      "x": 1,
+      "y": 0,
+      "z": 6
+    }
+  },
+  {
+    "name": "LSSH",
+    "color": "#FF6F00",
+    "scale": 0.05,
+    "position": {
+      "x": -1,
+      "y": 0,
+      "z": 8
+    }
+  },
+  {
+    "name": "LSSF",
+    "color": "#FF6F00",
+    "scale": 0.05,
+    "position": {
+      "x": 1,
+      "y": 0,
+      "z": 8
+    }
+  },
+  {
+    "name": "LCBF",
+    "color": "#FF6F00",
+    "scale": 0.05,
+    "position": {
+      "x": -1,
+      "y": 0,
+      "z": 10
+    }
+  },
+  {
+    "name": "LCBH",
+    "color": "#FF6F00",
+    "scale": 0.05,
+    "position": {
+      "x": 1,
+      "y": 0,
+      "z": 10
+    }
+  },
+  {
+    "name": "LSBH",
+    "color": "#FF6F00",
+    "scale": 0.05,
+    "position": {
+      "x": -1,
+      "y": 0,
+      "z": 12
+    }
+  },
+  {
+    "name": "LSBF",
+    "color": "#FF6F00",
+    "scale": 0.05,
+    "position": {
+      "x": 1,
+      "y": 0,
+      "z": 12
+    }
+  },
+  {
+    "name": "DCSF",
+    "color": "#2C1C17",
+    "scale": 0.05,
+    "position": {
+      "x": -1,
+      "y": 0,
+      "z": -6
+    }
+  },
+  {
+    "name": "DCSH",
+    "color": "#2C1C17",
+    "scale": 0.05,
+    "position": {
+      "x": 1,
+      "y": 0,
+      "z": -6
+    }
+  },
+  {
+    "name": "DSSH",
+    "color": "#2C1C17",
+    "scale": 0.05,
+    "position": {
+      "x": -1,
+      "y": 0,
+      "z": -8
+    }
+  },
+  {
+    "name": "DSSF",
+    "color": "#2C1C17",
+    "scale": 0.05,
+    "position": {
+      "x": 1,
+      "y": 0,
+      "z": -8
+    }
+  },
+  {
+    "name": "DCBF",
+    "color": "#2C1C17",
+    "scale": 0.05,
+    "position": {
+      "x": -1,
+      "y": 0,
+      "z": -10
+    }
+  },
+  {
+    "name": "DCBH",
+    "color": "#2C1C17",
+    "scale": 0.05,
+    "position": {
+      "x": 1,
+      "y": 0,
+      "z": -10
+    }
+  },
+  {
+    "name": "DSBH",
+    "color": "#2C1C17",
+    "scale": 0.05,
+    "position": {
+      "x": -1,
+      "y": 0,
+      "z": -12
+    }
+  },
+  {
+    "name": "DSBF",
+    "color": "#2C1C17",
+    "scale": 0.05,
+    "position": {
+      "x": 1,
+      "y": 0,
+      "z": -12
+    }
+  }
+]

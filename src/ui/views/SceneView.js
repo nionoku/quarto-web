@@ -41,6 +41,8 @@ onMount(async () => {
   const boardCells = makeBoardCells()
   // load figures
   const figures = await loadFigures()
+  // make players markers
+  const playersMarkers = makePlayersMarkers()
 
   // add lights on scene
   scene.add(...lights)
@@ -50,6 +52,8 @@ onMount(async () => {
   scene.add(...boardCells)
   // add figures on board
   scene.add(...figures)
+  // add players markers
+  scene.add(...playersMarkers)
   // add renderer on screen
   container.appendChild(renderer.domElement)
 
@@ -235,6 +239,28 @@ function makeBoardCells () {
       cell.position.x,
       cell.position.y,
       cell.position.z
+    )
+
+    return mesh
+  })
+}
+
+/**
+ * @returns {Array<THREE.Mesh>}
+ */
+function makePlayersMarkers () {
+  return playersDescription.map(player => {
+    const geometry = new CylinderGeometry(1, 1, 0.2, 50, 1)
+    const material = new MeshPhongMaterial({ color: new Color(player.marker.color) })
+    const mesh = new Mesh(geometry, material)
+
+    material.transparent = true
+    material.opacity = 0.7
+
+    mesh.position.set(
+      player.marker.position.x,
+      player.marker.position.y,
+      player.marker.position.z
     )
 
     return mesh

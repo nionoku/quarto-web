@@ -11,7 +11,8 @@ import {
   Mesh,
   MeshPhongMaterial,
   DirectionalLight,
-  CylinderGeometry
+  CylinderGeometry,
+  Vector2
 } from 'three'
 import figuresDescription from '../../assets/descriptions/figures.json'
 import lightsDescription from '../../assets/descriptions/lights.json'
@@ -32,6 +33,8 @@ onMount(async () => {
   const camera = makeCamera(container)
   const controls = makeControls(camera, renderer.domElement)
   const scene = makeScene()
+
+  const mousePosition = new Vector2(-100, 100)
 
   // make lights
   const lights = makeLights()
@@ -57,8 +60,18 @@ onMount(async () => {
   // add renderer on screen
   container.appendChild(renderer.domElement)
 
+  // watch cursor position
+  window.addEventListener('mousemove', event => {
+    event.preventDefault()
+
+    mousePosition.x = (event.clientX / window.innerWidth) * 2 - 1
+    mousePosition.y = -(event.clientY / window.innerHeight) * 2 + 1
+  })
+
   // watch resize window
-  window.addEventListener('resize', () => {
+  window.addEventListener('resize', event => {
+    event.preventDefault()
+    
     camera.aspect = window.innerWidth / window.innerHeight
     camera.fov = calcFov(container)
     camera.updateProjectionMatrix()

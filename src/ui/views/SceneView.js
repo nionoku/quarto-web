@@ -47,6 +47,31 @@ onMount(async () => {
   // make players markers
   const playersMarkers = makePlayersMarkers()
 
+  // watch resize window
+  window.addEventListener('resize', event => {
+    event.preventDefault()
+
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.fov = calcFov(container)
+    camera.updateProjectionMatrix()
+    renderer.setSize(container.clientWidth, container.clientHeight)
+  })
+
+  // watch cursor position
+  renderer.domElement.addEventListener('mousemove', event => {
+    event.preventDefault()
+
+    mousePosition.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1
+    mousePosition.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
+  })
+
+  // add on mouse click listener
+  renderer.domElement.addEventListener('click', event => {
+    event.preventDefault()
+
+    // TODO (2021.04.06): Implement select figures
+  })
+
   // add lights on scene
   scene.add(...lights)
   // add board on scene
@@ -59,24 +84,6 @@ onMount(async () => {
   scene.add(...playersMarkers)
   // add renderer on screen
   container.appendChild(renderer.domElement)
-
-  // watch cursor position
-  window.addEventListener('mousemove', event => {
-    event.preventDefault()
-
-    mousePosition.x = (event.clientX / window.innerWidth) * 2 - 1
-    mousePosition.y = -(event.clientY / window.innerHeight) * 2 + 1
-  })
-
-  // watch resize window
-  window.addEventListener('resize', event => {
-    event.preventDefault()
-    
-    camera.aspect = window.innerWidth / window.innerHeight
-    camera.fov = calcFov(container)
-    camera.updateProjectionMatrix()
-    renderer.setSize(container.clientWidth, container.clientHeight)
-  })
 
   const render = function () {
     // update controls

@@ -270,7 +270,13 @@ function makeBoardCells () {
  */
 function makePlayersMarkers () {
   return playersDescription.map(player => {
-    const geometry = new CylinderGeometry(1, 1, 0.2, 50, 1)
+    const geometry = new CylinderGeometry(
+      player.marker.radius_top,
+      player.marker.radius_bottom,
+      player.marker.height,
+      player.marker.radial_segment,
+      player.marker.height_segment
+    )
     const material = new MeshPhongMaterial({ color: new Color(player.marker.color) })
     const mesh = new Mesh(geometry, material)
 

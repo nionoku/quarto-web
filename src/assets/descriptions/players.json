@@ -2,9 +2,14 @@
   {
     "order": 0,
     "marker": {
+      "radius_top": 1,
+      "radius_bottom": 1,
+      "height": 0.2,
+      "radial_segment": 50,
+      "height_segment": 1,
       "position": {
         "x": 6.5,
-        "y": 0,
+        "y": 0.1,
         "z": 0
       },
       "color": "blue"
@@ -13,9 +18,14 @@
   {
     "order": 1,
     "marker": {
+      "radius_top": 1,
+      "radius_bottom": 1,
+      "height": 0.2,
+      "radial_segment": 50,
+      "height_segment": 1,
       "position": {
         "x": -6.5,
-        "y": 0,
+        "y": 0.1,
         "z": 0
       },
       "color": "yellow"

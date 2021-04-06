@@ -251,7 +251,13 @@ function makeLights () {
  */
 function makeBoardCells () {
   return boardDescription.cells.map(cell => {
-    const geometry = new CylinderGeometry(1, 1, 0.2, 50, 1)
+    const geometry = new CylinderGeometry(
+      boardDescription.cell.radius_top,
+      boardDescription.cell.radius_bottom,
+      boardDescription.cell.height,
+      boardDescription.cell.radial_segment,
+      boardDescription.cell.height_segment
+    )
     const material = new MeshPhongMaterial({ color: new Color(cell.color) })
     const mesh = new Mesh(geometry, material)
 
@@ -269,13 +275,13 @@ function makeBoardCells () {
  * @returns {Array<THREE.Mesh>}
  */
 function makePlayersMarkers () {
-  return playersDescription.map(player => {
+  return playersDescription.players.map(player => {
     const geometry = new CylinderGeometry(
-      player.marker.radius_top,
-      player.marker.radius_bottom,
-      player.marker.height,
-      player.marker.radial_segment,
-      player.marker.height_segment
+      playersDescription.marker.radius_top,
+      playersDescription.marker.radius_bottom,
+      playersDescription.marker.height,
+      playersDescription.marker.radial_segment,
+      playersDescription.marker.height_segment
     )
     const material = new MeshPhongMaterial({ color: new Color(player.marker.color) })
     const mesh = new Mesh(geometry, material)

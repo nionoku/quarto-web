@@ -8,7 +8,13 @@
   },
   "players": [
     {
-      "order": 0,
+      "camera": {
+        "position": {
+          "x": 12,
+          "y": 16,
+          "z": 0
+        }
+      },
       "marker": {
         "position": {
           "x": 6.5,
@@ -19,7 +25,13 @@
       }
     },
     {
-      "order": 1,
+      "camera": {
+        "position": {
+          "x": -12,
+          "y": 16,
+          "z": 0
+        }
+      },
       "marker": {
         "position": {
           "x": -6.5,

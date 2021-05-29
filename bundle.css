@@ -1,5 +1,6 @@
 html, body {
   height: 100%;
   margin: 0;
+  overflow: hidden;
 }
-#scene-container.svelte-2rl3ie{height:100%}
+#scene-container.svelte-807g7i{height:100%}#round-marker.svelte-807g7i{position:absolute;bottom:0;left:0;padding:1rem 1.7rem;font-size:1.3rem}

@@ -2,7 +2,7 @@
   "marker": {
     "radius_top": 1,
     "radius_bottom": 1,
-    "height": 0.2,
+    "height": 0,
     "radial_segment": 50,
     "height_segment": 1
   },
@@ -12,7 +12,7 @@
       "marker": {
         "position": {
           "x": 6.5,
-          "y": 0.1,
+          "y": 0,
           "z": 0
         },
         "color": "blue"
@@ -23,7 +23,7 @@
       "marker": {
         "position": {
           "x": -6.5,
-          "y": 0.1,
+          "y": 0,
           "z": 0
         },
         "color": "yellow"

@@ -22,6 +22,7 @@ import cameraDescription from '../../assets/descriptions/camera.json'
 import boardDescription from '../../assets//descriptions/board.json'
 import playersDescription from '../../assets/descriptions/players.json'
 import { FiguresController } from '../../controllers/FiguresController'
+import { GameController } from '../../controllers/GameController'
 
 /**
  * @type {HTMLDivElement}
@@ -51,11 +52,9 @@ onMount(async () => {
   const playersMarkers = makePlayersMarkers()
 
   // init figures controller
-  const figuresController = new FiguresController(figures, figure => {
-    figure.position.y = 0.7
-  }, figure => {
-    figure.position.y = 0
-  })
+  const figuresController = new FiguresController(figures)
+  // init quarto game controller
+  const gameController = new GameController(playersMarkers)
 
   // watch resize window
   window.addEventListener('resize', event => {
@@ -79,7 +78,7 @@ onMount(async () => {
   renderer.domElement.addEventListener('click', event => {
     event.preventDefault()
 
-    onMouseClickIntersect(raycaster, mousePosition, camera, scene, figuresController)
+    onMouseClickIntersect(raycaster, mousePosition, camera, scene, figuresController, gameController)
   })
 
   // add lights on scene
@@ -205,8 +204,9 @@ function onMouseMoveIntersect (raycaster, position, camera, scene) {
  * @param {THREE.Camera} camera
  * @param {THREE.Scene} scene
  * @param {FiguresController} figuresController
+ * @param {GameController} gameController
  */
-function onMouseClickIntersect (raycaster, position, camera, scene, figuresController) {
+function onMouseClickIntersect (raycaster, position, camera, scene, figuresController, gameController) {
   try {
     raycaster.setFromCamera(position, camera)
 
@@ -214,17 +214,16 @@ function onMouseClickIntersect (raycaster, position, camera, scene, figuresContr
 
     // on figure intersect
     if (intersects[0].object.name.match(/[DL][CS][BS][FH]/)) {
-      onFigureClick(intersects[0].object, figuresController)
+      onFigureClick(intersects[0].object, figuresController, gameController)
+      // on board cell intersect
     } else if (intersects[0].object.name.match(/cell_[\d]+/)) {
-      console.log('is intersect board cell')
-      // on player marker
+      onBoardCellClick(intersects[0].object, figuresController, gameController)
+      // on player marker intersect
     } else if (intersects[0].object.name.match(/player_marker_[\d]/)) {
       console.log('is intersect player marker')
       // on board intersect
     } else if (intersects[0].object.name.match(/board/)) {
       console.log('is intersect board')
-    } else {
-      throw new Error('miss click')
     }
   } catch (err) {
     onMissClick(figuresController)
@@ -234,22 +233,77 @@ function onMouseClickIntersect (raycaster, position, camera, scene, figuresContr
 /**
  * @param {THREE.Object3D} figure
  * @param {FiguresController} figuresController
+ * @param {GameController} gameController
  */
-function onFigureClick (figure, figuresController) {
-  // break function if clicked by already selected figure
-  if (figuresController.selectedFigure && figure.name === figuresController.selectedFigure.name) {
-    return
+function onFigureClick (figure, figuresController, gameController) {
+  /**
+   * @param {THREE.Object3D} figure
+   */
+  function onSelectFigure (figure) {
+    figure.position.y = 0.7
   }
 
-  // set selected new figure
-  figuresController.setSelected(figure.name)
+  /**
+   * @param {THREE.Object3D} figure
+   */
+  function onReleaseFigure (figure) {
+    figure.position.y = 0
+  }
+
+  if (!figuresController.isLocked) {
+    // break function if clicked by already selected figure
+    if (figuresController.selectedFigure && figure.name === figuresController.selectedFigure.name) {
+      // set figure for next player
+      figuresController.selectedFigure.position.set(
+        gameController.nextPlayer.marker.position.x,
+        gameController.nextPlayer.marker.position.y,
+        gameController.nextPlayer.marker.position.z
+      )
+      // lock figures selector until previuse figure not be placed
+      figuresController.lockFiguresSelector()
+
+      return
+    }
+
+    // set selected new figure
+    figuresController.selectFigure(figure.name)
+
+    if (figuresController.selectedFigure) {
+      onSelectFigure(figuresController.selectedFigure)
+    }
+  }
+}
+
+/**
+ * @param {THREE.Object3D} cell
+ * @param {FiguresController} figuresController
+ * @param {GameController} gameController
+ */
+function onBoardCellClick (cell, figuresController, gameController) {
+  if (figuresController.isLocked && figuresController.selectedFigure) {
+    // set figure on board cell
+    figuresController.selectedFigure.position.set(
+      cell.position.x,
+      cell.position.y,
+      cell.position.z
+    )
+    // release figure
+    figuresController.selectFigure(null)
+    // TODO (2021.05.29): Remove placed figure from figures collection
+    // release other figures
+    figuresController.releaseFiguresSelector()
+    // set next turn
+    gameController.nextTurn()
+  }
 }
 
 /**
  * @param {FiguresController} figuresController
  */
 function onMissClick (figuresController) {
-  figuresController.setSelected(null)
+  if (!figuresController.isLocked) {
+    figuresController.selectFigure(null)
+  }
 }
 
 /**
@@ -363,7 +417,7 @@ function makePlayersMarkers () {
     const mesh = new Mesh(geometry, material)
 
     material.transparent = true
-    material.opacity = 0.7
+    material.opacity = 0
 
     mesh.name = `player_marker_${index}`
 

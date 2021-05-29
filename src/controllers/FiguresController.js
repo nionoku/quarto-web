@@ -1,4 +1,7 @@
 export class FiguresController {
+  /** @private */
+  _isLocked = false
+
   /**
    * @private
    * @type {THREE.Object3D | null}
@@ -36,7 +39,7 @@ export class FiguresController {
    * @param {string?} name
    * @returns {void}
    */
-  setSelected (name) {
+  selectFigure (name) {
     // unselect previuse figure
     if (this.selected) {
       if (this.onUnselectFigure) {
@@ -53,10 +56,22 @@ export class FiguresController {
     }
   }
 
+  lockFiguresSelector () {
+    this._isLocked = true
+  }
+
+  releaseFiguresSelector () {
+    this._isLocked = false
+  }
+
   /**
    * @returns {THREE.Object3D | null}
    */
   get selectedFigure () {
     return this.selected
+  }
+
+  get isLocked () {
+    return this._isLocked
   }
 }

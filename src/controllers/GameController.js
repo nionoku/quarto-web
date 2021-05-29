@@ -21,7 +21,7 @@ export class GameController {
   }
 
   nextTurn () {
-    this._currentPlayer++
+    this._currentPlayer = this._currentPlayer + 1 > 1 ? 0 : 1
   }
 
   get currentPlayer () {

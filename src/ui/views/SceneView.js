@@ -12,7 +12,8 @@ import {
   MeshPhongMaterial,
   DirectionalLight,
   CylinderGeometry,
-  Vector2
+  Vector2,
+  Raycaster
 } from 'three'
 import figuresDescription from '../../assets/descriptions/figures.json'
 import lightsDescription from '../../assets/descriptions/lights.json'
@@ -20,6 +21,7 @@ import sceneDescription from '../../assets/descriptions/scene.json'
 import cameraDescription from '../../assets/descriptions/camera.json'
 import boardDescription from '../../assets//descriptions/board.json'
 import playersDescription from '../../assets/descriptions/players.json'
+import { FiguresController } from '../../controllers/FiguresController'
 
 /**
  * @type {HTMLDivElement}
@@ -33,6 +35,7 @@ onMount(async () => {
   const camera = makeCamera(container)
   const controls = makeControls(camera, renderer.domElement)
   const scene = makeScene()
+  const raycaster = new Raycaster()
 
   const mousePosition = new Vector2(-100, 100)
 
@@ -46,6 +49,13 @@ onMount(async () => {
   const figures = await loadFigures()
   // make players markers
   const playersMarkers = makePlayersMarkers()
+
+  // init figures controller
+  const figuresController = new FiguresController(figures, figure => {
+    figure.position.y = 0.7
+  }, figure => {
+    figure.position.y = 0
+  })
 
   // watch resize window
   window.addEventListener('resize', event => {
@@ -69,7 +79,7 @@ onMount(async () => {
   renderer.domElement.addEventListener('click', event => {
     event.preventDefault()
 
-    // TODO (2021.04.06): Implement select figures
+    onMouseClickIntersect(raycaster, mousePosition, camera, scene, figuresController)
   })
 
   // add lights on scene
@@ -180,6 +190,69 @@ function calcFov (container) {
 }
 
 /**
+ * @param {THREE.Raycaster} raycaster
+ * @param {THREE.Vector2} position
+ * @param {THREE.Camera} camera
+ * @param {THREE.Scene} scene
+ */
+function onMouseMoveIntersect (raycaster, position, camera, scene) {
+  throw new Error('Not implemented')
+}
+
+/**
+ * @param {THREE.Raycaster} raycaster
+ * @param {THREE.Vector2} position
+ * @param {THREE.Camera} camera
+ * @param {THREE.Scene} scene
+ * @param {FiguresController} figuresController
+ */
+function onMouseClickIntersect (raycaster, position, camera, scene, figuresController) {
+  try {
+    raycaster.setFromCamera(position, camera)
+
+    const intersects = raycaster.intersectObjects(scene.children)
+
+    // on figure intersect
+    if (intersects[0].object.name.match(/[DL][CS][BS][FH]/)) {
+      onFigureClick(intersects[0].object, figuresController)
+    } else if (intersects[0].object.name.match(/cell_[\d]+/)) {
+      console.log('is intersect board cell')
+      // on player marker
+    } else if (intersects[0].object.name.match(/player_marker_[\d]/)) {
+      console.log('is intersect player marker')
+      // on board intersect
+    } else if (intersects[0].object.name.match(/board/)) {
+      console.log('is intersect board')
+    } else {
+      throw new Error('miss click')
+    }
+  } catch (err) {
+    onMissClick(figuresController)
+  }
+}
+
+/**
+ * @param {THREE.Object3D} figure
+ * @param {FiguresController} figuresController
+ */
+function onFigureClick (figure, figuresController) {
+  // break function if clicked by already selected figure
+  if (figuresController.selectedFigure && figure.name === figuresController.selectedFigure.name) {
+    return
+  }
+
+  // set selected new figure
+  figuresController.setSelected(figure.name)
+}
+
+/**
+ * @param {FiguresController} figuresController
+ */
+function onMissClick (figuresController) {
+  figuresController.setSelected(null)
+}
+
+/**
  * @returns {Promise<THREE.Mesh>}
  */
 async function loadBoard () {
@@ -188,6 +261,7 @@ async function loadBoard () {
   const material = new MeshPhongMaterial({ color: new Color(boardDescription.color) })
   const mesh = new Mesh(await loader.loadAsync('assets/models/board.stl'), material)
 
+  mesh.name = 'board'
   mesh.scale.set(boardDescription.scale, boardDescription.scale, boardDescription.scale)
   mesh.position.set(boardDescription.position.x, boardDescription.position.y, boardDescription.position.z)
   mesh.rotation.set(-Math.PI / 2, 0, 0)
@@ -250,7 +324,7 @@ function makeLights () {
  * @returns {Array<THREE.Mesh>}
  */
 function makeBoardCells () {
-  return boardDescription.cells.map(cell => {
+  return boardDescription.cells.map((cell, index) => {
     const geometry = new CylinderGeometry(
       boardDescription.cell.radius_top,
       boardDescription.cell.radius_bottom,
@@ -260,6 +334,8 @@ function makeBoardCells () {
     )
     const material = new MeshPhongMaterial({ color: new Color(cell.color) })
     const mesh = new Mesh(geometry, material)
+
+    mesh.name = `cell_${index}`
 
     mesh.position.set(
       cell.position.x,
@@ -275,7 +351,7 @@ function makeBoardCells () {
  * @returns {Array<THREE.Mesh>}
  */
 function makePlayersMarkers () {
-  return playersDescription.players.map(player => {
+  return playersDescription.players.map((player, index) => {
     const geometry = new CylinderGeometry(
       playersDescription.marker.radius_top,
       playersDescription.marker.radius_bottom,
@@ -288,6 +364,8 @@ function makePlayersMarkers () {
 
     material.transparent = true
     material.opacity = 0.7
+
+    mesh.name = `player_marker_${index}`
 
     mesh.position.set(
       player.marker.position.x,

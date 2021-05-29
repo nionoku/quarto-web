@@ -15,24 +15,10 @@ export class FiguresController {
   figures = []
 
   /**
-   * @type {((figure: THREE.Object3D) => void)?}
-   */
-  onSelectFigure
-
-  /**
-   * @type {((figure: THREE.Object3D) => void)?}
-   */
-  onUnselectFigure
-
-  /**
    * @param {Array<THREE.Object3D>} figures
-   * @param {((figure: THREE.Object3D) => void)?} onSelectFigure
-   * @param {((figure: THREE.Object3D) => void)?} onUnselectFigure
    */
-  constructor (figures, onSelectFigure, onUnselectFigure) {
+  constructor (figures) {
     this.figures = figures
-    this.onSelectFigure = onSelectFigure
-    this.onUnselectFigure = onUnselectFigure
   }
 
   /**
@@ -40,20 +26,11 @@ export class FiguresController {
    * @returns {void}
    */
   selectFigure (name) {
-    // unselect previuse figure
-    if (this.selected) {
-      if (this.onUnselectFigure) {
-        this.onUnselectFigure(this.selected)
-      }
-
-      this.selected = null
-    }
-
     this.selected = this.figures.find(it => it.name === name) ?? null
+  }
 
-    if (this.selected && this.onSelectFigure) {
-      this.onSelectFigure(this.selected)
-    }
+  releaseFigure () {
+    this.selectFigure(null)
   }
 
   lockFiguresSelector () {
@@ -62,6 +39,14 @@ export class FiguresController {
 
   releaseFiguresSelector () {
     this._isLocked = false
+  }
+
+  /**
+   * @param {string} name
+   * @returns {void}
+   */
+  removeFigure (name) {
+    this.figures.splice(this.figures.findIndex(it => it.name === name), 1)
   }
 
   /**

@@ -110,6 +110,8 @@ onMount(async () => {
     render()
   }
 
+  document.title = 'Quarto Web'
+
   animate()
 })
 
@@ -265,6 +267,10 @@ function onFigureClick (figure, figuresController, gameController) {
       return
     }
 
+    if (figuresController.selectedFigure) {
+      onReleaseFigure(figuresController.selectedFigure)
+    }
+
     // set selected new figure
     figuresController.selectFigure(figure.name)
 
@@ -287,8 +293,10 @@ function onBoardCellClick (cell, figuresController, gameController) {
       cell.position.y,
       cell.position.z
     )
+    // remove placed on board figure
+    figuresController.removeFigure(figuresController.selectedFigure.name)
     // release figure
-    figuresController.selectFigure(null)
+    figuresController.releaseFigure()
     // TODO (2021.05.29): Remove placed figure from figures collection
     // release other figures
     figuresController.releaseFiguresSelector()
@@ -301,8 +309,16 @@ function onBoardCellClick (cell, figuresController, gameController) {
  * @param {FiguresController} figuresController
  */
 function onMissClick (figuresController) {
-  if (!figuresController.isLocked) {
-    figuresController.selectFigure(null)
+  /**
+   * @param {THREE.Object3D} figure
+   */
+  function onReleaseFigure (figure) {
+    figure.position.y = 0
+  }
+
+  if (!figuresController.isLocked && figuresController.selectedFigure) {
+    onReleaseFigure(figuresController.selectedFigure)
+    figuresController.releaseFigure()
   }
 }
 

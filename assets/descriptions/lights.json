@@ -1,0 +1,22 @@
+[
+  {
+    "type": "directional_light",
+    "color": "#fff",
+    "intensity": 0.7,
+    "position": {
+      "x": 7,
+      "y": 10,
+      "z": 0
+    }
+  },
+  {
+    "type": "directional_light",
+    "color": "#fff",
+    "intensity": 0.7,
+    "position": {
+      "x": -7,
+      "y": 10,
+      "z": 0
+    }
+  }
+]

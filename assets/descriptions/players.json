@@ -1,0 +1,33 @@
+{
+  "marker": {
+    "radius_top": 1,
+    "radius_bottom": 1,
+    "height": 0,
+    "radial_segment": 50,
+    "height_segment": 1
+  },
+  "players": [
+    {
+      "order": 0,
+      "marker": {
+        "position": {
+          "x": 6.5,
+          "y": 0,
+          "z": 0
+        },
+        "color": "blue"
+      }
+    },
+    {
+      "order": 1,
+      "marker": {
+        "position": {
+          "x": -6.5,
+          "y": 0,
+          "z": 0
+        },
+        "color": "yellow"
+      }
+    }
+  ]
+}

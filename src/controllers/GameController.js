@@ -11,6 +11,16 @@ export class GameController {
   _currentPlayer = 0
 
   /**
+   * @private
+   */
+  _currentTurn = 0
+
+  /**
+   * @type {((player: number, turn: number) => void)?}
+   */
+  onTurn = null
+
+  /**
    * @param {Array<THREE.Object3D>} players
    */
   constructor (players) {
@@ -20,8 +30,20 @@ export class GameController {
     }))
   }
 
+  /**
+   * @param {((player: number, turn: number) => void)?} onTurn
+   */
+  setOnTurn (onTurn) {
+    this.onTurn = onTurn
+  }
+
   nextTurn () {
     this._currentPlayer = this._currentPlayer + 1 > 1 ? 0 : 1
+    this._currentTurn++
+
+    if (this.onTurn) {
+      this.onTurn(this._currentPlayer, this._currentTurn)
+    }
   }
 
   get currentPlayer () {
@@ -31,5 +53,9 @@ export class GameController {
   get nextPlayer () {
     const nextPlayerIndex = this._currentPlayer + 1 > 1 ? 0 : 1
     return this.players[nextPlayerIndex]
+  }
+
+  get currentTurn () {
+    return this._currentTurn
   }
 }

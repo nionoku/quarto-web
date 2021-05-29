@@ -13,7 +13,9 @@ import {
   DirectionalLight,
   CylinderGeometry,
   Vector2,
-  Raycaster
+  Raycaster,
+  Vector3,
+  Quaternion
 } from 'three'
 import figuresDescription from '../../assets/descriptions/figures.json'
 import lightsDescription from '../../assets/descriptions/lights.json'
@@ -23,6 +25,7 @@ import boardDescription from '../../assets//descriptions/board.json'
 import playersDescription from '../../assets/descriptions/players.json'
 import { FiguresController } from '../../controllers/FiguresController'
 import { GameController } from '../../controllers/GameController'
+import { Easing, Tween, update } from '@tweenjs/tween.js'
 
 /**
  * @type {HTMLDivElement}
@@ -55,6 +58,28 @@ onMount(async () => {
   const figuresController = new FiguresController(figures)
   // init quarto game controller
   const gameController = new GameController(playersMarkers)
+  gameController.setOnTurn((player, turn) => {
+    const playersCamera = [
+      new Vector3(
+        cameraDescription.position.x,
+        cameraDescription.position.y,
+        cameraDescription.position.z
+      ),
+      new Vector3(
+        -cameraDescription.position.x,
+        cameraDescription.position.y,
+        cameraDescription.position.z
+      )
+    ]
+
+    moveCameraToNextPlayer(camera, camera.position, playersCamera[player])
+
+    // if (player === 0) {
+    //   moveCameraToNextPlayer(camera, Math.PI, 0)
+    // } else {
+    //   moveCameraToNextPlayer(camera, 0, -Math.PI)
+    // }
+  })
 
   // watch resize window
   window.addEventListener('resize', event => {
@@ -94,25 +119,33 @@ onMount(async () => {
   // add renderer on screen
   container.appendChild(renderer.domElement)
 
-  const render = function () {
+  /**
+   * @param {number} time
+   */
+  const render = function (time) {
+    // update Tween time
+    update(time)
     // update controls
     controls.update()
     // render scene
     renderer.render(scene, camera)
   }
 
-  const animate = function () {
+  /**
+   * @param {number} time
+   */
+  const animate = function (time) {
     // set fps
     setTimeout(() => {
       requestAnimationFrame(animate)
     }, 1000 / fps)
     // render function
-    render()
+    render(time)
   }
 
   document.title = 'Quarto Web'
 
-  animate()
+  animate(0)
 })
 
 /**
@@ -219,13 +252,15 @@ function onMouseClickIntersect (raycaster, position, camera, scene, figuresContr
       onFigureClick(intersects[0].object, figuresController, gameController)
       // on board cell intersect
     } else if (intersects[0].object.name.match(/cell_[\d]+/)) {
-      onBoardCellClick(intersects[0].object, figuresController, gameController)
+      onBoardCellClick(intersects[0].object, figuresController)
       // on player marker intersect
     } else if (intersects[0].object.name.match(/player_marker_[\d]/)) {
       console.log('is intersect player marker')
       // on board intersect
     } else if (intersects[0].object.name.match(/board/)) {
       console.log('is intersect board')
+    } else {
+      throw new Error('Miss click')
     }
   } catch (err) {
     onMissClick(figuresController)
@@ -263,6 +298,8 @@ function onFigureClick (figure, figuresController, gameController) {
       )
       // lock figures selector until previuse figure not be placed
       figuresController.lockFiguresSelector()
+      // set next turn
+      gameController.nextTurn()
 
       return
     }
@@ -283,9 +320,8 @@ function onFigureClick (figure, figuresController, gameController) {
 /**
  * @param {THREE.Object3D} cell
  * @param {FiguresController} figuresController
- * @param {GameController} gameController
  */
-function onBoardCellClick (cell, figuresController, gameController) {
+function onBoardCellClick (cell, figuresController) {
   if (figuresController.isLocked && figuresController.selectedFigure) {
     // set figure on board cell
     figuresController.selectedFigure.position.set(
@@ -300,8 +336,6 @@ function onBoardCellClick (cell, figuresController, gameController) {
     // TODO (2021.05.29): Remove placed figure from figures collection
     // release other figures
     figuresController.releaseFiguresSelector()
-    // set next turn
-    gameController.nextTurn()
   }
 }
 
@@ -320,6 +354,38 @@ function onMissClick (figuresController) {
     onReleaseFigure(figuresController.selectedFigure)
     figuresController.releaseFigure()
   }
+}
+
+/**
+ *
+ * @param {THREE.Camera} camera
+ * @param {THREE.Vector3} from
+ * @param {THREE.Vector3} to
+ */
+function moveCameraToNextPlayer (camera, from, to) {
+  const animated = { ...from }
+
+  new Tween(animated)
+    .to({ ...to }, 1500)
+    .easing(Easing.Quartic.InOut)
+    .onUpdate(() => {
+      camera.position.set(
+        animated.x,
+        animated.y,
+        animated.z
+      )
+    })
+    .start()
+  // const animated = { angle: from }
+
+  // new Tween(animated)
+  //   .to({ angle: to }, 1500)
+  //   .easing(Easing.Quartic.InOut)
+  //   .onUpdate(() => {
+  //     camera.position.x = cameraDescription.position.x * Math.cos(animated.angle)
+  //     camera.position.z = 15 * Math.sin(animated.angle)
+  //   })
+  //   .start()
 }
 
 /**

@@ -1,6 +1,6 @@
 {
    "name": "quarto-web",
-   "version": "0.1.3",
+   "version": "0.1.4",
    "scripts": {
       "build": "sh scripts/before_start.sh && rollup -c",
       "watch": "sh scripts/before_start.sh && rollup -c -w",

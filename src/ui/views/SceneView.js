@@ -59,26 +59,11 @@ onMount(async () => {
   // init quarto game controller
   const gameController = new GameController(playersMarkers)
   gameController.setOnTurn((player, turn) => {
-    const playersCamera = [
-      new Vector3(
-        cameraDescription.position.x,
-        cameraDescription.position.y,
-        cameraDescription.position.z
-      ),
-      new Vector3(
-        -cameraDescription.position.x,
-        cameraDescription.position.y,
-        cameraDescription.position.z
-      )
-    ]
-
-    moveCameraToNextPlayer(camera, camera.position, playersCamera[player])
-
-    // if (player === 0) {
-    //   moveCameraToNextPlayer(camera, Math.PI, 0)
-    // } else {
-    //   moveCameraToNextPlayer(camera, 0, -Math.PI)
-    // }
+    moveCameraToNextPlayer(camera, camera.position, new Vector3(
+      playersDescription.players[player].camera.position.x,
+      playersDescription.players[player].camera.position.y,
+      playersDescription.players[player].camera.position.z
+    ))
   })
 
   // watch resize window
@@ -376,16 +361,6 @@ function moveCameraToNextPlayer (camera, from, to) {
       )
     })
     .start()
-  // const animated = { angle: from }
-
-  // new Tween(animated)
-  //   .to({ angle: to }, 1500)
-  //   .easing(Easing.Quartic.InOut)
-  //   .onUpdate(() => {
-  //     camera.position.x = cameraDescription.position.x * Math.cos(animated.angle)
-  //     camera.position.z = 15 * Math.sin(animated.angle)
-  //   })
-  //   .start()
 }
 
 /**

@@ -14,8 +14,7 @@ import {
   CylinderGeometry,
   Vector2,
   Raycaster,
-  Vector3,
-  Quaternion
+  Vector3
 } from 'three'
 import figuresDescription from '../../assets/descriptions/figures.json'
 import lightsDescription from '../../assets/descriptions/lights.json'
@@ -32,6 +31,8 @@ import { Easing, Tween, update } from '@tweenjs/tween.js'
  * @readonly
  */
 let container
+
+let text = turnDescription(0, 0)
 
 onMount(async () => {
   const fps = 30
@@ -59,6 +60,8 @@ onMount(async () => {
   // init quarto game controller
   const gameController = new GameController(playersMarkers)
   gameController.setOnTurn((player, turn) => {
+    text = turnDescription(player, turn)
+
     moveCameraToNextPlayer(camera, camera.position, new Vector3(
       playersDescription.players[player].camera.position.x,
       playersDescription.players[player].camera.position.y,
@@ -132,6 +135,16 @@ onMount(async () => {
 
   animate(0)
 })
+
+/**
+ *
+ * @param {number} player current player
+ * @param {number} turn
+ * @returns
+ */
+function turnDescription (player, turn) {
+  return `Ход ${player === 0 ? 'первого' : 'второго'} игрока, номер хода: ${turn}`
+}
 
 /**
  * @param {HTMLElement} container
@@ -318,7 +331,6 @@ function onBoardCellClick (cell, figuresController) {
     figuresController.removeFigure(figuresController.selectedFigure.name)
     // release figure
     figuresController.releaseFigure()
-    // TODO (2021.05.29): Remove placed figure from figures collection
     // release other figures
     figuresController.releaseFiguresSelector()
   }

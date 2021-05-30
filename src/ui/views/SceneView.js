@@ -74,7 +74,7 @@ onMount(async () => {
     event.preventDefault()
 
     camera.aspect = window.innerWidth / window.innerHeight
-    camera.fov = calcFov(container)
+    camera.zoom = calcZoom(container)
     camera.updateProjectionMatrix()
     renderer.setSize(container.clientWidth, container.clientHeight)
   })
@@ -165,10 +165,11 @@ function makeRenderer (container) {
  * @returns {PerspectiveCamera}
  */
 function makeCamera (container) {
-  const fov = calcFov(container)
+  const fov = cameraDescription.fov
   const aspect = container.clientWidth / container.clientHeight
   const near = cameraDescription.near
   const far = cameraDescription.far
+  const zoom = calcZoom(container)
 
   const camera = new PerspectiveCamera(fov, aspect, near, far)
   camera.position.set(
@@ -176,12 +177,13 @@ function makeCamera (container) {
     cameraDescription.position.y,
     cameraDescription.position.z
   )
-
   camera.rotation.set(
     cameraDescription.rotation.x,
     cameraDescription.rotation.y,
     cameraDescription.rotation.z
   )
+  camera.zoom = zoom
+  camera.updateProjectionMatrix()
 
   return camera
 }
@@ -216,9 +218,8 @@ function makeControls (camera, canvas) {
  * @param {HTMLElement} container
  * @returns {number}
  */
-function calcFov (container) {
-  const a = container.clientHeight / container.clientWidth
-  return Math.pow(a, 2) + cameraDescription.fov.ceed * a + cameraDescription.fov.min
+function calcZoom (container) {
+  return cameraDescription.zoom.ceed * (container.clientWidth) / 100
 }
 
 /**

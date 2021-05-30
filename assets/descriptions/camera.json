@@ -3,7 +3,7 @@
   "far": 500,
   "fov": 45,
   "zoom": {
-    "ceed": 0.09
+    "factor": 1600
   },
   "position": {
     "x": 12,

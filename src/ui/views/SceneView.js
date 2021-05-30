@@ -79,6 +79,14 @@ onMount(async () => {
     renderer.setSize(container.clientWidth, container.clientHeight)
   })
 
+  // watch touch position
+  renderer.domElement.addEventListener('touchstart', event => {
+    event.preventDefault()
+
+    mousePosition.x = (event.touches[0].clientX / renderer.domElement.clientWidth) * 2 - 1
+    mousePosition.y = -(event.touches[0].clientY / renderer.domElement.clientHeight) * 2 + 1
+  })
+
   // watch cursor position
   renderer.domElement.addEventListener('mousemove', event => {
     event.preventDefault()
@@ -87,11 +95,18 @@ onMount(async () => {
     mousePosition.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
   })
 
+  // add on touch listener
+  renderer.domElement.addEventListener('touchend', event => {
+    event.preventDefault()
+
+    onClickIntersect(raycaster, mousePosition, camera, scene, figuresController, gameController)
+  })
+
   // add on mouse click listener
   renderer.domElement.addEventListener('click', event => {
     event.preventDefault()
 
-    onMouseClickIntersect(raycaster, mousePosition, camera, scene, figuresController, gameController)
+    onClickIntersect(raycaster, mousePosition, camera, scene, figuresController, gameController)
   })
 
   // add lights on scene
@@ -240,7 +255,7 @@ function onMouseMoveIntersect (raycaster, position, camera, scene) {
  * @param {FiguresController} figuresController
  * @param {GameController} gameController
  */
-function onMouseClickIntersect (raycaster, position, camera, scene, figuresController, gameController) {
+function onClickIntersect (raycaster, position, camera, scene, figuresController, gameController) {
   try {
     raycaster.setFromCamera(position, camera)
 

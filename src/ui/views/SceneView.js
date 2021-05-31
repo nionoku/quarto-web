@@ -357,47 +357,28 @@ function onFigureClick (figure, figuresController, gameController) {
  * @param {GameController} gameController
  */
 function onBoardCellClick (cell, figuresController, gameController) {
-  /**
-   * @param {THREE.Object3D} figure
-   */
-  function setFigureOnBoard (figure) {
+  if (figuresController.isLocked && figuresController.selectedFigure) {
     // set figure on board cell
-    figure.position.set(
+    figuresController.selectedFigure.position.set(
       cell.position.x,
       cell.position.y,
       cell.position.z
     )
-    // remove placed on board figure
-    figuresController.removeFigure(figure.name)
+    // remove figure from figures controller
+    figuresController.removeFigure(figuresController.selectedFigure.name)
+    // set figure on virtual board
+    gameController.setFigureOnBoard(figuresController.selectedFigure.name, Number(cell.name.substring(5)))
     // release figure
     figuresController.releaseFigure()
-    // release other figures
-    figuresController.releaseFiguresSelector()
-  }
-
-  /**
-   * @param {string} figureName
-   * @param {number} cellIndex
-   * @param {(player: number, turn: number) => void} onPlayerWin
-   */
-  function handleCheckWin (figureName, cellIndex, onPlayerWin) {
-    // add figure on virtual board
-    gameController.setFigureOnBoard(figureName, cellIndex)
     // check is player win
     if (gameController.hasPlayerWin) {
-      onPlayerWin(gameController.currentPlayer.index, gameController.currentTurn)
-    }
-  }
-
-  if (figuresController.isLocked && figuresController.selectedFigure) {
-    // handle check player win
-    handleCheckWin(figuresController.selectedFigure.name, Number(cell.name.substring(5)), (player, turn) => {
-      text = winDescription(player, turn)
-      // lock figures for continue game
+      text = winDescription(gameController.currentPlayer.index, gameController.currentTurn)
+      // game end, lock figures
       figuresController.lockFiguresSelector()
-    })
-    // set figure on game board
-    setFigureOnBoard(figuresController.selectedFigure)
+    } else {
+      // release other figures
+      figuresController.releaseFiguresSelector()
+    }
   }
 }
 

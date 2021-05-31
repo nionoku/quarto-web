@@ -63,6 +63,17 @@ export class GameController {
     this.board[cell] = figureName.split('')
   }
 
+  /**
+   * @param {Array<Array<Array<string>>>} array
+   */
+  checkRowByAttr (array) {
+    return array.some(row =>
+      row.every(signs => signs.length === 4) && row.every(signs =>
+        signs.some((sign, i) => row.every(it => sign === it[i]))
+      )
+    )
+  }
+
   get currentPlayer () {
     return this.players[this._currentPlayer]
   }
@@ -76,17 +87,40 @@ export class GameController {
     return this._currentTurn
   }
 
+  /** @returns {boolean} */
   get hasPlayerWin () {
-    console.log(this.board)
+    [
+      [
+        this.board[0],
+        this.board[5],
+        this.board[10],
+        this.board[15]
+      ]
+    ]
 
+    /** @type {Array<Array<Array<string>>>} */
+    const itemsByRows = Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => []))
+
+    /** @type {Array<Array<Array<string>>>} */
+    const itemsByColumns = Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => []))
+
+    /** @type {Array<Array<Array<string>>>} */
+    const itemsByDiag = Array.from({ length: 2 }, () => Array.from({ length: 4 }, () => []))
+    // fill items by row, by columns and by diagonal for check win combination by attributes
     for (let i = 0; i < this.boardLength / 4; i++) {
       for (let j = 0; j < this.boardLength / 4; j++) {
-        for (let k = 0; i < this.boardLength / 4; k++) {
-          // TODO (2021.05.31): Implement check win
-        }
+        itemsByRows[i][j].push(...this.board[i * (this.boardLength / 4) + j])
+        itemsByColumns[i][j].push(...this.board[j * (this.boardLength / 4) + i])
       }
+
+      itemsByDiag[0][i].push(...this.board[i * 5])
+      itemsByDiag[1][i].push(...this.board[i * 3 + 3])
     }
 
-    return false
+    return [
+      this.checkRowByAttr(itemsByRows),
+      this.checkRowByAttr(itemsByColumns),
+      this.checkRowByAttr(itemsByDiag)
+    ].some(it => it)
   }
 }

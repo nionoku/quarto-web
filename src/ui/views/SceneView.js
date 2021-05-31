@@ -42,7 +42,7 @@ onMount(async () => {
   const scene = makeScene()
   const raycaster = new Raycaster()
 
-  const mousePosition = new Vector2(-100, 100)
+  const cursorPosition = new Vector2(-100, 100)
 
   // make lights
   const lights = makeLights()
@@ -84,30 +84,30 @@ onMount(async () => {
   renderer.domElement.addEventListener('touchstart', event => {
     event.preventDefault()
 
-    mousePosition.x = (event.touches[0].clientX / renderer.domElement.clientWidth) * 2 - 1
-    mousePosition.y = -(event.touches[0].clientY / renderer.domElement.clientHeight) * 2 + 1
+    cursorPosition.x = (event.touches[0].clientX / renderer.domElement.clientWidth) * 2 - 1
+    cursorPosition.y = -(event.touches[0].clientY / renderer.domElement.clientHeight) * 2 + 1
   })
 
   // watch cursor position
   renderer.domElement.addEventListener('mousemove', event => {
     event.preventDefault()
 
-    mousePosition.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1
-    mousePosition.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
+    cursorPosition.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1
+    cursorPosition.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
   })
 
   // add on touch listener
   renderer.domElement.addEventListener('touchend', event => {
     event.preventDefault()
 
-    onClickIntersect(raycaster, mousePosition, camera, scene, figuresController, gameController)
+    onClickIntersect(raycaster, cursorPosition, camera, scene, figuresController, gameController)
   })
 
   // add on mouse click listener
   renderer.domElement.addEventListener('click', event => {
     event.preventDefault()
 
-    onClickIntersect(raycaster, mousePosition, camera, scene, figuresController, gameController)
+    onClickIntersect(raycaster, cursorPosition, camera, scene, figuresController, gameController)
   })
 
   // add lights on scene
@@ -231,6 +231,7 @@ function makeScene () {
 function makeControls (camera, canvas) {
   const controls = new OrbitControls(camera, canvas)
   controls.enableRotate = true
+  controls.maxZoom = 3
   // controls.minPolarAngle = 0
   // controls.maxPolarAngle = Math.PI / 3
   // controls.enableDamping = true
@@ -289,10 +290,9 @@ function onClickIntersect (raycaster, position, camera, scene, figuresController
       onBoardCellClick(intersects[0].object, figuresController, gameController)
       // on player marker intersect
     } else if (intersects[0].object.name.match(/player_marker_[\d]/)) {
-      console.log('is intersect player marker')
       // on board intersect
     } else if (intersects[0].object.name.match(/board/)) {
-      console.log('is intersect board')
+      // on miss click
     } else {
       throw new Error('Miss click')
     }

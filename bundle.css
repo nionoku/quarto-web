@@ -3,4 +3,4 @@ html, body {
   margin: 0;
   overflow: hidden;
 }
-#scene-container.svelte-807g7i{height:100%}#round-marker.svelte-807g7i{position:absolute;bottom:0;left:0;padding:1rem 1.7rem;font-size:1.3rem}
+#scene-container.svelte-17munno{height:100%}#round-marker.svelte-17munno{position:absolute;bottom:0;left:0;padding:1rem 1.7rem;font-size:1.5rem}@media screen and (max-width: 600px){#round-marker.svelte-17munno{font-size:1.3rem}}@media screen and (max-width: 400px){#round-marker.svelte-17munno{font-size:1.1rem}}

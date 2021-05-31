@@ -108,8 +108,6 @@ export class GameController {
       itemsByDiag[1][i].push(...this.board[i * 3 + 3])
     }
 
-    console.log([this.checkRowByAttr(itemsByRows), this.checkRowByAttr(itemsByColumns), this.checkRowByAttr(itemsByDiag)])
-
     return this.checkRowByAttr(itemsByRows) ||
       this.checkRowByAttr(itemsByColumns) ||
       this.checkRowByAttr(itemsByDiag)

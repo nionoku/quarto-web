@@ -153,13 +153,21 @@ onMount(async () => {
 })
 
 /**
- *
- * @param {number} player current player
+ * @param {number} playerIndex
  * @param {number} turn
  * @returns
  */
-function turnDescription (player, turn) {
-  return `Ход ${player === 0 ? 'первого' : 'второго'} игрока, номер хода: ${turn}`
+function turnDescription (playerIndex, turn) {
+  return `Ход ${playerIndex === 0 ? 'первого' : 'второго'} игрока, номер хода: ${turn}`
+}
+
+/**
+ * @param {number} playerIndex
+ * @param {number} turn
+ * @returns
+ */
+function winDescription (playerIndex, turn) {
+  return `${playerIndex === 0 ? 'Первый' : 'Второй'} игрок победил, номер хода: ${turn}`
 }
 
 /**
@@ -349,24 +357,47 @@ function onFigureClick (figure, figuresController, gameController) {
  * @param {GameController} gameController
  */
 function onBoardCellClick (cell, figuresController, gameController) {
-  if (figuresController.isLocked && figuresController.selectedFigure) {
-    // TODO (2021.05.31): Set figure on virtual board and check the player win
-
-    gameController.setFigureOnBoard(figuresController.selectedFigure.name, Number(cell.name.substring(5)))
-    gameController.hasPlayerWin
-
+  /**
+   * @param {THREE.Object3D} figure
+   */
+  function setFigureOnBoard (figure) {
     // set figure on board cell
-    figuresController.selectedFigure.position.set(
+    figure.position.set(
       cell.position.x,
       cell.position.y,
       cell.position.z
     )
     // remove placed on board figure
-    figuresController.removeFigure(figuresController.selectedFigure.name)
+    figuresController.removeFigure(figure.name)
     // release figure
     figuresController.releaseFigure()
     // release other figures
     figuresController.releaseFiguresSelector()
+  }
+
+  /**
+   * @param {string} figureName
+   * @param {number} cellIndex
+   * @param {(player: number, turn: number) => void} onPlayerWin
+   */
+  function handleCheckWin (figureName, cellIndex, onPlayerWin) {
+    // add figure on virtual board
+    gameController.setFigureOnBoard(figureName, cellIndex)
+    // check is player win
+    if (gameController.hasPlayerWin) {
+      onPlayerWin(gameController.currentPlayer.index, gameController.currentTurn)
+    }
+  }
+
+  if (figuresController.isLocked && figuresController.selectedFigure) {
+    // handle check player win
+    handleCheckWin(figuresController.selectedFigure.name, Number(cell.name.substring(5)), (player, turn) => {
+      text = winDescription(player, turn)
+      // lock figures for continue game
+      figuresController.lockFiguresSelector()
+    })
+    // set figure on game board
+    setFigureOnBoard(figuresController.selectedFigure)
   }
 }
 

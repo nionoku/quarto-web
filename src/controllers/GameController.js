@@ -10,7 +10,7 @@ export class GameController {
 
   /**
    * @private
-   * @type {Array<{ player: number, marker: THREE.Object3D }>}
+   * @type {Array<{ index: number, marker: THREE.Object3D }>}
    */
   players
 
@@ -34,7 +34,7 @@ export class GameController {
    */
   constructor (players) {
     this.players = players.map((it, index) => ({
-      player: index,
+      index: index,
       marker: it
     }))
   }
@@ -89,15 +89,6 @@ export class GameController {
 
   /** @returns {boolean} */
   get hasPlayerWin () {
-    [
-      [
-        this.board[0],
-        this.board[5],
-        this.board[10],
-        this.board[15]
-      ]
-    ]
-
     /** @type {Array<Array<Array<string>>>} */
     const itemsByRows = Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => []))
 
@@ -117,10 +108,10 @@ export class GameController {
       itemsByDiag[1][i].push(...this.board[i * 3 + 3])
     }
 
-    return [
-      this.checkRowByAttr(itemsByRows),
-      this.checkRowByAttr(itemsByColumns),
+    console.log([this.checkRowByAttr(itemsByRows), this.checkRowByAttr(itemsByColumns), this.checkRowByAttr(itemsByDiag)])
+
+    return this.checkRowByAttr(itemsByRows) ||
+      this.checkRowByAttr(itemsByColumns) ||
       this.checkRowByAttr(itemsByDiag)
-    ].some(it => it)
   }
 }

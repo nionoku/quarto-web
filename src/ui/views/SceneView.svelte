@@ -13,6 +13,15 @@
     bottom: 0;
     left: 0;
     padding: 1rem 1.7rem;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
+
+    @media screen and (max-width: 600px) {
+      font-size: 1.3rem;
+    }
+
+    @media screen and (max-width: 400px) {
+      font-size: 1.1rem;
+    }
+
   }
 </style>

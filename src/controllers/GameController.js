@@ -1,4 +1,13 @@
 export class GameController {
+  /** @readonly */
+  boardLength = 4 * 4
+
+  /**
+   * @private
+   * @type {Array<Array<string>>}
+   */
+  board = Array.from({ length: this.boardLength }, () => [])
+
   /**
    * @private
    * @type {Array<{ player: number, marker: THREE.Object3D }>}
@@ -46,6 +55,14 @@ export class GameController {
     }
   }
 
+  /**
+   * @param {string} figureName
+   * @param {number} cell
+   */
+  setFigureOnBoard (figureName, cell) {
+    this.board[cell] = figureName.split('')
+  }
+
   get currentPlayer () {
     return this.players[this._currentPlayer]
   }
@@ -57,5 +74,19 @@ export class GameController {
 
   get currentTurn () {
     return this._currentTurn
+  }
+
+  get hasPlayerWin () {
+    console.log(this.board)
+
+    for (let i = 0; i < this.boardLength / 4; i++) {
+      for (let j = 0; j < this.boardLength / 4; j++) {
+        for (let k = 0; i < this.boardLength / 4; k++) {
+          // TODO (2021.05.31): Implement check win
+        }
+      }
+    }
+
+    return false
   }
 }

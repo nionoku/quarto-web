@@ -278,7 +278,7 @@ function onClickIntersect (raycaster, position, camera, scene, figuresController
       onFigureClick(intersects[0].object, figuresController, gameController)
       // on board cell intersect
     } else if (intersects[0].object.name.match(/cell_[\d]+/)) {
-      onBoardCellClick(intersects[0].object, figuresController)
+      onBoardCellClick(intersects[0].object, figuresController, gameController)
       // on player marker intersect
     } else if (intersects[0].object.name.match(/player_marker_[\d]/)) {
       console.log('is intersect player marker')
@@ -346,9 +346,15 @@ function onFigureClick (figure, figuresController, gameController) {
 /**
  * @param {THREE.Object3D} cell
  * @param {FiguresController} figuresController
+ * @param {GameController} gameController
  */
-function onBoardCellClick (cell, figuresController) {
+function onBoardCellClick (cell, figuresController, gameController) {
   if (figuresController.isLocked && figuresController.selectedFigure) {
+    // TODO (2021.05.31): Set figure on virtual board and check the player win
+
+    gameController.setFigureOnBoard(figuresController.selectedFigure.name, Number(cell.name.substring(5)))
+    gameController.hasPlayerWin
+
     // set figure on board cell
     figuresController.selectedFigure.position.set(
       cell.position.x,
